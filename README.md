@@ -26,3 +26,13 @@ The project manually implements:
 - Similarity Matching using shared interests and Jaccard similarity
 
 These graph algorithms are central to the application.
+
+
+## Output
+
+<img width="1903" height="931" alt="image" src="https://github.com/user-attachments/assets/de59eea4-089a-4647-b6ab-4b6955e4d2f3" />
+
+<img width="1584" height="927" alt="image" src="https://github.com/user-attachments/assets/0d6cab02-71bc-4cf9-b659-858394b2c39f" />
+
+
+<img width="1510" height="966" alt="image" src="https://github.com/user-attachments/assets/4fa5ac36-96d1-4abe-8b78-511cbb564e0c" />
