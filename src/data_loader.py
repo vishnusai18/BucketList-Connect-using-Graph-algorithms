@@ -14,6 +14,15 @@ from pathlib import Path
 import pandas as pd
 
 
+SUPPORTED_DATASET_SUFFIXES = {
+    ".csv",
+    ".tsv",
+    ".txt",
+    ".xlsx",
+    ".xls",
+}
+
+
 def normalize_column_name(column: str) -> str:
     """
     Normalize column names so matching is easier.
@@ -128,6 +137,41 @@ def read_dataset_file(dataset_path: str | Path) -> pd.DataFrame:
     )
 
 
+def resolve_dataset_path(dataset_path: str | Path) -> Path:
+    """
+    Resolve a dataset file path.
+
+    If a directory is provided, auto-select the single supported dataset file
+    inside it. This matches the Streamlit and CLI defaults that pass `data`.
+    """
+    dataset_path = Path(dataset_path)
+
+    if dataset_path.is_dir():
+        dataset_files = sorted(
+            file_path
+            for file_path in dataset_path.iterdir()
+            if file_path.is_file()
+            and file_path.suffix.lower() in SUPPORTED_DATASET_SUFFIXES
+        )
+
+        if not dataset_files:
+            raise FileNotFoundError(
+                f"No supported dataset files were found in: {dataset_path}. "
+                "Add a .csv, .tsv, .txt, .xlsx, or .xls file."
+            )
+
+        if len(dataset_files) > 1:
+            available_files = ", ".join(file_path.name for file_path in dataset_files)
+            raise ValueError(
+                f"Multiple dataset files were found in {dataset_path}: "
+                f"{available_files}. Please specify the exact file path."
+            )
+
+        return dataset_files[0]
+
+    return dataset_path
+
+
 def load_visitors_dataset(
     dataset_path: str | Path = "data/user_data_version_3_10K_Users.csv",
     max_users: int | None = 500,
@@ -145,7 +189,7 @@ def load_visitors_dataset(
 
     This function does not hardcode activity names or destination names.
     """
-    dataset_path = Path(dataset_path)
+    dataset_path = resolve_dataset_path(dataset_path)
 
     if not dataset_path.exists():
         raise FileNotFoundError(
